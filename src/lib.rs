@@ -4,3 +4,4 @@
 extern crate approx;
 
 pub mod tup;
+pub mod color;
