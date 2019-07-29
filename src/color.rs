@@ -12,6 +12,24 @@ impl Color {
     pub fn new(red: f32, green: f32, blue: f32) -> Color {
         Color{red, green, blue}
     }
+
+    pub fn clamp(&self) -> Color {
+        let min = 0.0;
+        let max = 1.0;
+
+        Color::new(
+            self.red.min(max).max(min),
+            self.green.min(max).max(min),
+            self.blue.min(max).max(min))
+    }
+
+    pub fn to_pixel(&self) -> [u8;3 ] {
+        let clamped = self.clamp();
+
+        [(clamped.red * 255.0).round() as u8,
+         (clamped.green * 255.0).round() as u8,
+         (clamped.blue * 255.0).round() as u8]
+    }
 }
 
 impl Add for Color {
