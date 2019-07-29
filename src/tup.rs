@@ -1,5 +1,5 @@
 use std::cmp::PartialEq;
-use std::ops::{Add, Sub, Neg};
+use std::ops::{Add, Sub, Neg, Mul};
 
 #[derive(Debug, Clone, Copy)]
 struct Tup {
@@ -21,11 +21,36 @@ impl Tup {
     fn is_vector(&self) -> bool {
         self.w == 0.0
     }
+
+    fn mag(&self) -> f32 {
+        let s = self.x.powi(2) +
+            self.y.powi(2) +
+            self.z.powi(2) +
+            self.w.powi(2);
+        s.sqrt()
+    }
+
+    fn norm(&self) -> Tup {
+        let mag = self.mag();
+        Tup::new(
+            self.x / mag,
+            self.y / mag,
+            self.z / mag,
+            self.w / mag)
+    }
+
+    fn dot(&self, other: Tup) -> f32 {
+        self.x * other.x +
+            self.y * other.y +
+            self.z * other.z +
+            self.w * other.w
+    }
 }
 
 
 #[derive(Debug, Clone, Copy)]
 pub struct Point(Tup);
+
 impl Point {
     pub fn new(x: f32, y: f32, z: f32) -> Point {
         Point(Tup::new(x, y, z, 1.0))
@@ -38,6 +63,25 @@ pub struct Vector(Tup);
 impl Vector {
     pub fn new(x: f32, y:f32, z: f32) -> Vector {
         Vector(Tup::new(x, y, z, 0.0))
+    }
+
+    pub fn mag(&self) -> f32 {
+        self.0.mag()
+    }
+
+    pub fn norm(&self) -> Vector {
+        Vector(self.0.norm())
+    }
+
+    pub fn dot(&self, other: Vector) -> f32 {
+        self.0.dot(other.0)
+    }
+
+    pub fn cross(&self, other: Vector) -> Vector {
+        Vector::new(
+            self.0.y * other.0.z - self.0.z * other.0.y,
+            self.0.z * other.0.x - self.0.x * other.0.z,
+            self.0.x * other.0.y - self.0.y * other.0.x)
     }
 }
 
@@ -120,6 +164,26 @@ impl Neg for Vector {
     }
 }
 
+impl Mul<f32> for Tup {
+    type Output = Self;
+
+    fn mul(self, other: f32) -> Self {
+        Self::new(self.x * other,
+                  self.y * other,
+                  self.z * other,
+                  self.w * other)
+    }
+}
+
+impl Mul<f32> for Vector {
+    type Output = Self;
+
+    fn mul(self, other: f32) -> Self {
+        Self::new(self.0.x * other,
+                  self.0.y * other,
+                  self.0.z * other)
+    }
+}
 
 
 impl PartialEq for Tup {
@@ -258,5 +322,59 @@ mod tests {
 
         let a = Vector::new(1.0, -2.0, 3.0);
         assert_eq!(-a, Vector::new(-1.0, 2.0, -3.0));
+    }
+
+    #[test]
+    fn mul() {
+        let a = Vector::new(1.0, -2.0, 3.0);
+        assert_eq!(a * 3.5, Vector::new(3.5, -7.0, 10.5));
+
+        let a = Vector::new(1.0, -2.0, 3.0);
+        assert_eq!(a * 0.5, Vector::new(0.5, -1.0, 1.5));
+    }
+
+    #[test]
+    fn magnitude() {
+        let a = Vector::new(1.0, 0.0, 0.0);
+        assert_eq!(a.mag(), 1.0);
+
+        let a = Vector::new(0.0, 1.0, 0.0);
+        assert_eq!(a.mag(), 1.0);
+
+        let a = Vector::new(0.0, 0.0, 1.0);
+        assert_eq!(a.mag(), 1.0);
+
+        let a = Vector::new(1.0, 2.0, 3.0);
+        assert_eq!(a.mag(), (14.0 as f32).sqrt());
+
+        let a = Vector::new(-1.0, -2.0, -3.0);
+        assert_eq!(a.mag(), (14.0 as f32).sqrt());
+    }
+
+    #[test]
+    fn normalize() {
+        let a = Vector::new(4.0, 0.0, 0.0);
+        assert_eq!(a.norm(), Vector::new(1.0, 0.0, 0.0));
+
+        let a = Vector::new(1.0, 2.0, 3.0);
+        assert_eq!(a.norm(), Vector::new(0.2672612, 0.5345225, 0.8017837));
+
+        let a = Vector::new(1.0, 2.0, 3.0);
+        assert!(abs_diff_eq!(a.norm().mag(), 1.0));
+    }
+
+    #[test]
+    fn dot() {
+        let a = Vector::new(1.0, 2.0, 3.0);
+        let b = Vector::new(2.0, 3.0, 4.0);
+        assert_eq!(a.dot(b), 20.0);
+    }
+
+    #[test]
+    fn cross() {
+        let a = Vector::new(1.0, 2.0, 3.0);
+        let b = Vector::new(2.0, 3.0, 4.0);
+        assert_eq!(a.cross(b), Vector::new(-1.0, 2.0, -1.0));
+        assert_eq!(b.cross(a), Vector::new(1.0, -2.0, 1.0));
     }
 }
