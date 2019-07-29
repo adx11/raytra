@@ -12,6 +12,14 @@ impl Canvas {
                 height,
                 pixels: vec![vec![Color::new(0.0, 0.0, 0.0); height]; width]}
     }
+
+    fn at(&self, x: usize, y: usize) -> Color {
+        self.pixels[x][y]
+    }
+
+    fn write_at(&mut self, x: usize, y: usize, color: Color) {
+        self.pixels[x][y] = color;
+    }
 }
 
 
@@ -35,5 +43,14 @@ mod tests {
                 assert_eq!(c.pixels[i][j], black)
             }
         }
+    }
+
+    #[test]
+    fn write_at() {
+        let mut c = Canvas::new(10, 20);
+        let red = Color::new(1.0, 0.0, 0.0);
+
+        c.write_at(2, 3, red);
+        assert_eq!(c.at(2,3), red);
     }
 }
