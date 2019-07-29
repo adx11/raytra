@@ -2,14 +2,14 @@ use std::cmp::PartialEq;
 use std::ops::{Add, Sub, Mul};
 
 #[derive(Debug, Clone, Copy)]
-struct Color {
+pub struct Color {
     red: f32,
     green: f32,
     blue: f32,
 }
 
 impl Color {
-    fn new(red: f32, green: f32, blue: f32) -> Color {
+    pub fn new(red: f32, green: f32, blue: f32) -> Color {
         Color{red, green, blue}
     }
 }
