@@ -124,10 +124,10 @@ impl Neg for Vector {
 
 impl PartialEq for Tup {
     fn eq(&self, other: &Self) -> bool {
-        relative_eq!(self.x, other.x)
-            && relative_eq!(self.y, other.y)
-            && relative_eq!(self.z, other.z)
-            && relative_eq!(self.w, other.w)
+        abs_diff_eq!(self.x, other.x)
+            && abs_diff_eq!(self.y, other.y)
+            && abs_diff_eq!(self.z, other.z)
+            && abs_diff_eq!(self.w, other.w)
     }
 }
 
