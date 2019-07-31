@@ -35,7 +35,7 @@ impl Matrix4x4 {
                                                  [0.0, 0.0, 1.0, 0.0],
                                                  [0.0, 0.0, 0.0, 1.0]]};
 
-    fn row(self, row: usize) -> Tup {
+    fn row(&self, row: usize) -> Tup {
         Tup::new(self.elem[row][0],
                  self.elem[row][1],
                  self.elem[row][2],
@@ -43,14 +43,14 @@ impl Matrix4x4 {
 
     }
 
-    fn col(self, col: usize) -> Tup {
+    fn col(&self, col: usize) -> Tup {
         Tup::new(self.elem[0][col],
                  self.elem[1][col],
                  self.elem[2][col],
                  self.elem[3][col])
     }
 
-    fn transpose(self) -> Matrix4x4 {
+    pub fn transpose(&self) -> Matrix4x4 {
         let mut elem = [[0.0f32; 4]; 4];
 
         for i in 0..4 {
@@ -61,6 +61,11 @@ impl Matrix4x4 {
 
         Matrix4x4{elem}
     }
+
+    pub fn at(&self, a: usize, b: usize) -> f32 {
+        self.elem[a][b]
+    }
+
 }
 
 impl Matrix3x3 {
@@ -74,6 +79,11 @@ impl Matrix3x3 {
                    [e31, e32, e33]]
         }
     }
+
+    pub fn at(&self, a: usize, b: usize) -> f32 {
+        self.elem[a][b]
+    }
+
 }
 
 impl Matrix2x2 {
@@ -84,6 +94,10 @@ impl Matrix2x2 {
             elem: [[e11, e12],
                    [e21, e22]]
         }
+    }
+
+    pub fn at(&self, a: usize, b: usize) -> f32 {
+        self.elem[a][b]
     }
 }
 
