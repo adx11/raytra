@@ -2,6 +2,8 @@ use raytra::tup::*;
 use raytra::canvas::Canvas;
 use raytra::color::Color;
 
+use std::fs;
+
 #[derive(Debug)]
 struct Projectile {
     pos: Point,
@@ -43,5 +45,6 @@ fn main() {
         p = tick(&e, &p);
     }
 
-    print!("{}", canvas.to_ppm());
+    fs::write("proj.ppm",
+              canvas.to_ppm().as_bytes()).expect("Could not write PPM file");
 }
