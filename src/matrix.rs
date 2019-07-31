@@ -30,6 +30,11 @@ impl Matrix4x4 {
         }
     }
 
+    const IDENTITY: Matrix4x4 = Matrix4x4{elem: [[1.0, 0.0, 0.0, 0.0],
+                                                 [0.0, 1.0, 0.0, 0.0],
+                                                 [0.0, 0.0, 1.0, 0.0],
+                                                 [0.0, 0.0, 0.0, 1.0]]};
+
     fn row(self, row: usize) -> Tup {
         Tup::new(self.elem[row][0],
                  self.elem[row][1],
@@ -43,6 +48,18 @@ impl Matrix4x4 {
                  self.elem[1][col],
                  self.elem[2][col],
                  self.elem[3][col])
+    }
+
+    fn transpose(self) -> Matrix4x4 {
+        let mut elem = [[0.0f32; 4]; 4];
+
+        for i in 0..4 {
+            for j in 0..4 {
+                elem[j][i] = self.elem[i][j];
+            }
+        }
+
+        Matrix4x4{elem}
     }
 }
 
@@ -198,5 +215,34 @@ mod tests {
         let b = Tup::new(1.0, 2.0, 3.0, 1.0);
 
         assert_eq!(a * b, Tup::new(18.0, 24.0, 33.0, 1.0));
+    }
+
+    #[test]
+    fn mul_identity() {
+        let a = Matrix4x4::new(0.0, 1.0, 2.0, 4.0,
+                               1.0, 2.0, 4.0, 8.0,
+                               2.0, 4.0, 8.0, 16.0,
+                               4.0, 8.0, 16.0, 32.0);
+
+        assert_eq!(a * Matrix4x4::IDENTITY,
+                   Matrix4x4::new(0.0, 1.0, 2.0, 4.0,
+                                  1.0, 2.0, 4.0, 8.0,
+                                  2.0, 4.0, 8.0, 16.0,
+                                  4.0, 8.0, 16.0, 32.0));
+    }
+
+    #[test]
+    fn transpose() {
+        let a = Matrix4x4::new(0.0, 9.0, 3.0, 0.0,
+                               9.0, 8.0, 0.0, 8.0,
+                               1.0, 8.0, 5.0, 3.0,
+                               0.0, 0.0, 5.0, 8.0);
+        assert_eq!(a.transpose(),
+                   Matrix4x4::new(0.0, 9.0, 1.0, 0.0,
+                                  9.0, 8.0, 8.0, 0.0,
+                                  3.0, 0.0, 5.0, 5.0,
+                                  0.0, 8.0, 3.0, 8.0));
+        assert_eq!(Matrix4x4::IDENTITY.transpose(),
+                   Matrix4x4::IDENTITY);
     }
 }
