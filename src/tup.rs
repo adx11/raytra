@@ -2,7 +2,7 @@ use std::cmp::PartialEq;
 use std::ops::{Add, Sub, Neg, Mul};
 
 #[derive(Debug, Clone, Copy)]
-struct Tup {
+pub struct Tup {
     x: f32,
     y: f32,
     z: f32,
@@ -10,7 +10,7 @@ struct Tup {
 }
 
 impl Tup {
-    fn new(x: f32, y: f32, z: f32, w: f32) -> Tup {
+    pub fn new(x: f32, y: f32, z: f32, w: f32) -> Tup {
         Tup{x, y, z, w}
     }
 
@@ -22,7 +22,7 @@ impl Tup {
         self.w == 0.0
     }
 
-    fn mag(&self) -> f32 {
+    pub fn mag(&self) -> f32 {
         let s = self.x.powi(2) +
             self.y.powi(2) +
             self.z.powi(2) +
@@ -30,7 +30,7 @@ impl Tup {
         s.sqrt()
     }
 
-    fn norm(&self) -> Tup {
+    pub fn norm(&self) -> Tup {
         let mag = self.mag();
         Tup::new(
             self.x / mag,
@@ -39,7 +39,7 @@ impl Tup {
             self.w / mag)
     }
 
-    fn dot(&self, other: Tup) -> f32 {
+    pub fn dot(&self, other: Tup) -> f32 {
         self.x * other.x +
             self.y * other.y +
             self.z * other.z +
