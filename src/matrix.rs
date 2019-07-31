@@ -8,10 +8,12 @@ pub struct Matrix4x4 {
     elem: [[f32; 4]; 4]
 }
 
+#[derive(Debug, Clone, Copy)]
 pub struct Matrix3x3 {
     elem: [[f32; 3]; 3]
 }
 
+#[derive(Debug, Clone, Copy)]
 pub struct Matrix2x2 {
     elem: [[f32; 2]; 2]
 }
@@ -66,6 +68,29 @@ impl Matrix4x4 {
         self.elem[a][b]
     }
 
+    pub fn submatrix(&self, row: usize, col: usize) -> Matrix3x3 {
+        let mut elem = [[0.0f32; 3]; 3];
+        let mut row_off = 0;
+        let mut col_off = 0;
+
+        for i in 0..4 {
+            if i == row {
+                row_off = 1;
+                continue;
+            }
+            for j in 0..4 {
+                if j == col {
+                    col_off = 1;
+                    continue;
+                }
+                elem[i-row_off][j-col_off] = self.at(i,j);
+            }
+            col_off = 0;
+        }
+
+        Matrix3x3{elem}
+    }
+
 }
 
 impl Matrix3x3 {
@@ -84,6 +109,33 @@ impl Matrix3x3 {
         self.elem[a][b]
     }
 
+    pub fn submatrix(&self, row: usize, col: usize) -> Matrix2x2 {
+        let mut elem = [[0.0f32; 2]; 2];
+        let mut row_off = 0;
+        let mut col_off = 0;
+
+        for i in 0..3 {
+            if i == row {
+                row_off = 1;
+                continue;
+            }
+            for j in 0..3 {
+                if j == col {
+                    col_off = 1;
+                    continue;
+                }
+                elem[i-row_off][j-col_off] = self.at(i,j);
+            }
+            col_off = 0;
+        }
+
+        Matrix2x2{elem}
+    }
+
+    pub fn minor(&self, row: usize, col: usize) -> f32 {
+        let s = self.submatrix(row, col);
+        s.determinant()
+    }
 }
 
 impl Matrix2x2 {
@@ -99,6 +151,11 @@ impl Matrix2x2 {
     pub fn at(&self, a: usize, b: usize) -> f32 {
         self.elem[a][b]
     }
+
+    pub fn determinant(&self) -> f32 {
+        self.at(0,0) * self.at(1,1) - self.at(0,1) * self.at(1,0)
+    }
+
 }
 
 impl Mul for Matrix4x4 {
@@ -285,4 +342,42 @@ mod tests {
         assert_eq!(Matrix4x4::IDENTITY.transpose(),
                    Matrix4x4::IDENTITY);
     }
+
+    #[test]
+    fn determinant() {
+        let a = Matrix2x2::new(1.0, 5.0,
+                              -3.0, 2.0);
+        assert_eq!(a.determinant(), 17.0);
+    }
+
+    #[test]
+    fn submatrix() {
+        let a = Matrix3x3::new(1.0, 5.0, 0.0,
+                               -3.0, 2.0, 7.0,
+                               0.0, 6.0, -3.0);
+        assert_eq!(a.submatrix(0, 2),
+                   Matrix2x2::new(-3.0, 2.0,
+                                  0.0, 6.0));
+
+        let a = Matrix4x4::new(-6.0, 1.0, 1.0, 6.0,
+                               -8.0, 5.0, 8.0, 6.0,
+                               -1.0, 0.0, 8.0, 2.0,
+                               -7.0, 1.0, -1.0, 1.0);
+        assert_eq!(a.submatrix(2, 1),
+                   Matrix3x3::new(-6.0, 1.0, 6.0,
+                                  -8.0, 8.0, 6.0,
+                                  -7.0, -1.0, 1.0));
+    }
+
+    #[test]
+    fn minor() {
+        let a = Matrix3x3::new(3.0, 5.0, 0.0,
+                               2.0, -1.0, -7.0,
+                               6.0, -1.0, 5.0);
+        let b = a.submatrix(1, 0);
+
+        assert_eq!(b.determinant(), 25.0);
+        assert_eq!(a.minor(1, 0), 25.0);
+    }
+
 }
