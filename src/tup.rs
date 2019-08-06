@@ -76,7 +76,9 @@ impl Point {
         self.0.z
     }
 
-
+    pub fn dot(&self, other: Point) -> f32 {
+        self.0.dot(other.0)
+    }
 }
 
 #[derive(Debug, Clone, Copy)]
