@@ -53,6 +53,20 @@ pub fn rotation_z(rad: f32) -> Matrix4x4 {
     trans
 }
 
+pub fn shearing(xy: f32, xz: f32,
+                yx: f32, yz: f32,
+                zx: f32, zy: f32) -> Matrix4x4 {
+    let mut trans = Matrix4x4::IDENTITY;
+
+    trans.elem[0][1] = xy;
+    trans.elem[0][2] = xz;
+    trans.elem[1][0] = yx;
+    trans.elem[1][2] = yz;
+    trans.elem[2][0] = zx;
+    trans.elem[2][1] = zy;
+
+    trans
+}
 
 #[cfg(test)]
 mod tests {
@@ -121,6 +135,25 @@ mod tests {
                    Point::new(-2.0_f32.sqrt() / 2.0, 2.0_f32.sqrt() / 2.0, 0.0));
         assert_eq!(rotation_z(PI / 2.0) * p,
                    Point::new(-1.0, 0.0, 0.0));
+    }
 
+    #[test]
+    fn shear() {
+        let p = Point::new(2.0, 3.0, 4.0);
+
+        let t = shearing(1.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+        assert_eq!(t * p, Point::new(5.0, 3.0, 4.0));
+
+        let t = shearing(0.0, 0.0, 1.0, 0.0, 0.0, 0.0);
+        assert_eq!(t * p, Point::new(2.0, 5.0, 4.0));
+
+        let t = shearing(0.0, 0.0, 0.0, 1.0, 0.0, 0.0);
+        assert_eq!(t * p, Point::new(2.0, 7.0, 4.0));
+
+        let t = shearing(0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+        assert_eq!(t * p, Point::new(2.0, 3.0, 6.0));
+
+        let t = shearing(0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+        assert_eq!(t * p, Point::new(2.0, 3.0, 7.0));
     }
 }
