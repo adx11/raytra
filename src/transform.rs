@@ -16,17 +16,12 @@ mod tests {
     use crate::tup::*;
 
     #[test]
-    fn trans() {
+    fn translate() {
         let t = translation(5.0, -3.0, 2.0);
         assert_eq!(t, Matrix4x4::new(1.0, 0.0, 0.0, 5.0,
                                      0.0, 1.0, 0.0, -3.0,
                                      0.0, 0.0, 1.0, 2.0,
                                      0.0, 0.0, 0.0, 1.0));
-    }
-
-    #[test]
-    fn trans_mul() {
-        let t = translation(5.0, -3.0, 2.0);
         let p = Point::new(-3.0, 4.0, 5.0);
 
         assert_eq!(t * p, Point::new(2.0, 1.0, 7.0));
