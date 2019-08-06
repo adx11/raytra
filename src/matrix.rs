@@ -106,13 +106,8 @@ impl Matrix4x4 {
     }
 
     pub fn determinant(self) -> f32 {
-        let mut det: f32 = 0.0;
-
-        for i in 0..4 {
-            det += self.elem[0][i] * self.cofactor(0, i);
-        }
-
-        det
+        (0..4).map(|i| self.elem[0][i] * self.cofactor(0, i))
+            .fold(0.0, |acc, x| acc + x)
     }
 
     pub fn inverse(&self) -> Option<Matrix4x4> {
@@ -189,13 +184,8 @@ impl Matrix3x3 {
     }
 
     pub fn determinant(&self) -> f32 {
-        let mut det: f32 = 0.0;
-
-        for i in 0..3 {
-            det += self.elem[0][i] * self.cofactor(0, i);
-        }
-
-        det
+        (0..3).map(|i| self.elem[0][i] * self.cofactor(0, i))
+            .fold(0.0, |acc, x| acc + x)
     }
 }
 
