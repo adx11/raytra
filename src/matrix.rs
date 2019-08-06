@@ -1,21 +1,21 @@
 use std::cmp::PartialEq;
 use std::ops::Mul;
 
-use crate::tup::{Tup};
+use crate::tup::{Tup, Point, Vector};
 
 #[derive(Debug, Clone, Copy)]
 pub struct Matrix4x4 {
-    elem: [[f32; 4]; 4]
+    pub elem: [[f32; 4]; 4]
 }
 
 #[derive(Debug, Clone, Copy)]
 pub struct Matrix3x3 {
-    elem: [[f32; 3]; 3]
+    pub elem: [[f32; 3]; 3]
 }
 
 #[derive(Debug, Clone, Copy)]
 pub struct Matrix2x2 {
-    elem: [[f32; 2]; 2]
+    pub elem: [[f32; 2]; 2]
 }
 
 impl Matrix4x4 {
@@ -32,10 +32,10 @@ impl Matrix4x4 {
         }
     }
 
-    const IDENTITY: Matrix4x4 = Matrix4x4{elem: [[1.0, 0.0, 0.0, 0.0],
-                                                 [0.0, 1.0, 0.0, 0.0],
-                                                 [0.0, 0.0, 1.0, 0.0],
-                                                 [0.0, 0.0, 0.0, 1.0]]};
+    pub const IDENTITY: Matrix4x4 = Matrix4x4{elem: [[1.0, 0.0, 0.0, 0.0],
+                                                     [0.0, 1.0, 0.0, 0.0],
+                                                     [0.0, 0.0, 1.0, 0.0],
+                                                     [0.0, 0.0, 0.0, 1.0]]};
 
     fn row(&self, row: usize) -> Tup {
         Tup::new(self.elem[row][0],
@@ -235,6 +235,22 @@ impl Mul<Tup> for Matrix4x4 {
                  self.row(1).dot(rhs),
                  self.row(2).dot(rhs),
                  self.row(3).dot(rhs))
+    }
+}
+
+impl Mul<Point> for Matrix4x4 {
+    type Output = Point;
+
+    fn mul(self, rhs: Point) -> Point {
+        Point::from_tup(self * rhs.to_tup())
+    }
+}
+
+impl Mul<Vector> for Matrix4x4 {
+    type Output = Vector;
+
+    fn mul(self, rhs: Vector) -> Vector {
+        Vector::from_tup(self * rhs.to_tup())
     }
 }
 

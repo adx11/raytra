@@ -56,6 +56,14 @@ impl Point {
         Point(Tup::new(x, y, z, 1.0))
     }
 
+    pub fn from_tup(t: Tup) -> Point {
+        Point(t)
+    }
+
+    pub fn to_tup(self) -> Tup {
+        self.0
+    }
+
     pub fn x(&self) -> f32 {
         self.0.x
     }
@@ -67,6 +75,8 @@ impl Point {
     pub fn z(&self) -> f32 {
         self.0.z
     }
+
+
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -75,6 +85,14 @@ pub struct Vector(Tup);
 impl Vector {
     pub fn new(x: f32, y:f32, z: f32) -> Vector {
         Vector(Tup::new(x, y, z, 0.0))
+    }
+
+    pub fn from_tup(t: Tup) -> Vector {
+        Vector(t)
+    }
+
+    pub fn to_tup(self) -> Tup {
+        self.0
     }
 
     pub fn x(&self) -> f32 {
