@@ -68,6 +68,35 @@ pub fn shearing(xy: f32, xz: f32,
     trans
 }
 
+impl Matrix4x4 {
+    pub fn translate(self, x: f32, y: f32, z: f32) -> Matrix4x4 {
+        translation(x, y, z) * self
+    }
+
+    pub fn scale(self, x: f32, y: f32, z: f32) -> Matrix4x4 {
+        scaling(x, y, z) * self
+    }
+
+    pub fn rotate_x(self, rad: f32) -> Matrix4x4 {
+        rotation_x(rad) * self
+    }
+
+    pub fn rotate_y(self, rad: f32) -> Matrix4x4 {
+        rotation_y(rad) * self
+    }
+
+    pub fn rotate_z(self, rad: f32) -> Matrix4x4 {
+        rotation_z(rad) * self
+    }
+
+    pub fn shear(self,
+                 xy: f32, xz: f32,
+                 yx: f32, yz: f32,
+                 zx: f32, zy: f32) -> Matrix4x4 {
+        shearing(xy, xz, yx, yz, zx, zy) * self
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -155,5 +184,17 @@ mod tests {
 
         let t = shearing(0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
         assert_eq!(t * p, Point::new(2.0, 3.0, 7.0));
+    }
+
+    #[test]
+    fn chain() {
+        let p = Point::new(1.0, 0.0, 1.0);
+        let t = Matrix4x4::IDENTITY.rotate_x(PI / 2.0)
+            .scale(5.0, 5.0, 5.0)
+            .translate(10.0, 5.0, 7.0);
+
+        assert_eq!(translation(10.0, 5.0, 7.0) * scaling(5.0, 5.0, 5.0) * rotation_x(PI / 2.0) * p,
+                   Point::new(15.0, 0.0, 7.0));
+        assert_eq!(t * p, Point::new(15.0, 0.0, 7.0));
     }
 }
