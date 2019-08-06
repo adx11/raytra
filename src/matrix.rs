@@ -192,7 +192,7 @@ impl PartialEq for Matrix4x4 {
     fn eq(&self, rhs: &Matrix4x4) -> bool {
         for r in 0..4 {
             for c in 0..4 {
-                if !abs_diff_eq!(self.elem[r][c], rhs.elem[r][c]) {
+                if abs_diff_ne!(self.elem[r][c], rhs.elem[r][c], epsilon=0.00001) {
                     return false;
                 }
             }
@@ -205,7 +205,7 @@ impl PartialEq for Matrix3x3 {
     fn eq(&self, rhs: &Matrix3x3) -> bool {
         for r in 0..3 {
             for c in 0..3 {
-                if !abs_diff_eq!(self.elem[r][c], rhs.elem[r][c]) {
+                if abs_diff_ne!(self.elem[r][c], rhs.elem[r][c], epsilon=0.00001) {
                     return false;
                 }
             }
@@ -218,7 +218,7 @@ impl PartialEq for Matrix2x2 {
     fn eq(&self, rhs: &Matrix2x2) -> bool {
         for r in 0..2 {
             for c in 0..2 {
-                if !abs_diff_eq!(self.elem[r][c], rhs.elem[r][c]) {
+                if abs_diff_ne!(self.elem[r][c], rhs.elem[r][c], epsilon=0.00001) {
                     return false;
                 }
             }
