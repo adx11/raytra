@@ -20,10 +20,45 @@ pub fn scaling(x: f32, y: f32, z: f32) -> Matrix4x4 {
     trans
 }
 
+pub fn rotation_x(rad: f32) -> Matrix4x4 {
+    let mut trans = Matrix4x4::IDENTITY;
+
+    trans.elem[1][1] = rad.cos();
+    trans.elem[1][2] = -rad.sin();
+    trans.elem[2][1] = rad.sin();
+    trans.elem[2][2] = rad.cos();
+
+    trans
+}
+
+pub fn rotation_y(rad: f32) -> Matrix4x4 {
+    let mut trans = Matrix4x4::IDENTITY;
+
+    trans.elem[0][0] = rad.cos();
+    trans.elem[0][2] = rad.sin();
+    trans.elem[2][0] = -rad.sin();
+    trans.elem[2][2] = rad.cos();
+
+    trans
+}
+
+pub fn rotation_z(rad: f32) -> Matrix4x4 {
+    let mut trans = Matrix4x4::IDENTITY;
+
+    trans.elem[0][0] = rad.cos();
+    trans.elem[0][1] = -rad.sin();
+    trans.elem[1][0] = rad.sin();
+    trans.elem[1][1] = rad.cos();
+
+    trans
+}
+
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::tup::*;
+    use std::f32::consts::PI;
 
     #[test]
     fn translate() {
@@ -63,5 +98,29 @@ mod tests {
         let p = Point::new(2.0, 3.0, 4.0);
 
         assert_eq!(t * p, Point::new(-2.0, 3.0, 4.0));
+    }
+
+    #[test]
+    fn rotate() {
+        let p = Point::new(0.0, 1.0, 0.0);
+        assert_eq!(rotation_x(PI / 4.0) * p,
+                   Point::new(0.0, 2.0_f32.sqrt() / 2.0, 2.0_f32.sqrt() / 2.0));
+        assert_eq!(rotation_x(PI / 2.0) * p,
+                   Point::new(0.0, 0.0, 1.0));
+        assert_eq!(rotation_x(PI / 4.0).inverse().unwrap() * p,
+                   Point::new(0.0, 2.0_f32.sqrt() / 2.0, -2.0_f32.sqrt() / 2.0));
+
+        let p = Point::new(0.0, 0.0, 1.0);
+        assert_eq!(rotation_y(PI / 4.0) * p,
+                   Point::new(2.0_f32.sqrt() / 2.0, 0.0, 2.0_f32.sqrt() / 2.0));
+        assert_eq!(rotation_y(PI / 2.0) * p,
+                   Point::new(1.0, 0.0, 0.0));
+
+        let p = Point::new(0.0, 1.0, 0.0);
+        assert_eq!(rotation_z(PI / 4.0) * p,
+                   Point::new(-2.0_f32.sqrt() / 2.0, 2.0_f32.sqrt() / 2.0, 0.0));
+        assert_eq!(rotation_z(PI / 2.0) * p,
+                   Point::new(-1.0, 0.0, 0.0));
+
     }
 }
