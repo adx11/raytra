@@ -91,6 +91,47 @@ impl Matrix4x4 {
         Matrix3x3{elem}
     }
 
+    pub fn minor(self, row: usize, col: usize) -> f32 {
+        self.submatrix(row, col).determinant()
+    }
+
+    pub fn cofactor(self, row: usize, col: usize) -> f32 {
+        let mut m = self.minor(row, col);
+
+        if (row + col) % 2 == 1 {
+            m = -m
+        }
+
+        m
+    }
+
+    pub fn determinant(self) -> f32 {
+        let mut det: f32 = 0.0;
+
+        for i in 0..4 {
+            det += self.elem[0][i] * self.cofactor(0, i);
+        }
+
+        det
+    }
+
+    pub fn inverse(&self) -> Option<Matrix4x4> {
+        let det = self.determinant();
+
+        if det == 0.0 {
+            return None;
+        }
+
+        let mut elem = [[0.0_f32; 4]; 4];
+
+        for row in 0..4 {
+            for col in 0..4 {
+                elem[col][row] = self.cofactor(row, col) / det;
+            }
+        }
+        Some(Matrix4x4{elem})
+    }
+
 }
 
 impl Matrix3x3 {
@@ -136,6 +177,26 @@ impl Matrix3x3 {
         let s = self.submatrix(row, col);
         s.determinant()
     }
+
+    pub fn cofactor(&self, row: usize, col: usize) -> f32 {
+        let mut m = self.minor(row, col);
+
+        if (row + col) % 2 == 1 {
+            m = -m
+        }
+
+        m
+    }
+
+    pub fn determinant(&self) -> f32 {
+        let mut det: f32 = 0.0;
+
+        for i in 0..3 {
+            det += self.elem[0][i] * self.cofactor(0, i);
+        }
+
+        det
+    }
 }
 
 impl Matrix2x2 {
@@ -155,7 +216,6 @@ impl Matrix2x2 {
     pub fn determinant(&self) -> f32 {
         self.at(0,0) * self.at(1,1) - self.at(0,1) * self.at(1,0)
     }
-
 }
 
 impl Mul for Matrix4x4 {
@@ -380,4 +440,78 @@ mod tests {
         assert_eq!(a.minor(1, 0), 25.0);
     }
 
+    #[test]
+    fn cofactor() {
+        let a = Matrix3x3::new(3.0, 5.0, 0.0,
+                               2.0, -1.0, -7.0,
+                               6.0, -1.0, 5.0);
+
+        assert_eq!(a.cofactor(0,0), -12.0);
+        assert_eq!(a.cofactor(1, 0), -25.0);
+    }
+
+    #[test]
+    fn determinant3x3() {
+        let a = Matrix3x3::new(1.0, 2.0, 6.0,
+                               -5.0, 8.0, -4.0,
+                               2.0, 6.0, 4.0);
+
+        assert_eq!(a.cofactor(0, 0), 56.0);
+        assert_eq!(a.cofactor(0, 1), 12.0);
+        assert_eq!(a.cofactor(0, 2), -46.0);
+        assert_eq!(a.determinant(), -196.0);
+    }
+
+    #[test]
+    fn determinant4x4() {
+        let a = Matrix4x4::new(-2.0, -8.0, 3.0, 5.0,
+                               -3.0, 1.0, 7.0, 3.0,
+                               1.0, 2.0, -9.0, 6.0,
+                               -6.0, 7.0, 7.0, -9.0);
+
+        assert_eq!(a.cofactor(0, 0), 690.0);
+        assert_eq!(a.cofactor(0, 1), 447.0);
+        assert_eq!(a.cofactor(0, 2), 210.0);
+        assert_eq!(a.cofactor(0, 3), 51.0);
+        assert_eq!(a.determinant(), -4071.0);
+    }
+
+    #[test]
+    fn invertable() {
+        let a = Matrix4x4::new(6.0, 4.0, 4.0, 4.0,
+                               5.0, 5.0, 7.0, 6.0,
+                               4.0, -9.0, 3.0, -7.0,
+                               9.0, 1.0, 7.0, -6.0);
+        assert_eq!(a.determinant(), -2120.0);
+        assert_ne!(a.inverse(), None);
+
+        let a = Matrix4x4::new(-4.0, 2.0, -2.0, -3.0,
+                               9.0, 6.0, 2.0, 6.0,
+                               0.0, -5.0, 1.0, -5.0,
+                               0.0, 0.0, 0.0, 0.0);
+        assert_eq!(a.determinant(), 0.0);
+        assert_eq!(a.inverse(), None);
+    }
+
+    #[test]
+    fn inverse() {
+        let a = Matrix4x4::new(-5.0, 2.0, 6.0, -8.0,
+                               1.0, -5.0, 1.0, 8.0,
+                               7.0, 7.0, -6.0, -7.0,
+                               1.0, -3.0, 7.0, 4.0);
+
+        assert_eq!(a.inverse().unwrap(),
+                   Matrix4x4::new(0.21805, 0.45113, 0.24060, -0.04511,
+                                  -0.80827, -1.45677, -0.44361, 0.52068,
+                                  -0.07895, -0.22368, -0.05263, 0.19737,
+                                  -0.52256, -0.81391, -0.30075, 0.30639));
+
+        let b = Matrix4x4::new(8.0, 2.0, 2.0, 2.0,
+                               3.0, -1.0, 7.0, 0.0,
+                               7.0, 0.0, 5.0, 4.0,
+                               6.0, -2.0, 0.0, 5.0);
+        let c = a * b;
+        assert_ne!(b.inverse(), None);
+        assert_eq!(c * b.inverse().unwrap(), a);
+    }
 }
