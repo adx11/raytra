@@ -8,6 +8,12 @@ pub struct Color {
     blue: f32,
 }
 
+pub const RED: Color = Color{red: 1.0, blue: 0.0, green: 0.0};
+pub const BLUE: Color = Color{red: 0.0, blue: 1.0, green: 0.0};
+pub const GREEN: Color = Color{red: 0.0, blue: 0.0, green: 1.0};
+pub const WHITE: Color = Color{red: 1.0, blue: 1.0, green: 1.0};
+pub const BLACK: Color = Color{red: 0.0, blue: 0.0, green: 1.0};
+
 impl Color {
     pub fn new(red: f32, green: f32, blue: f32) -> Color {
         Color{red, green, blue}
@@ -31,6 +37,7 @@ impl Color {
          (clamped.blue * 255.0).round() as u8]
     }
 }
+
 
 impl Add for Color {
     type Output = Color;
