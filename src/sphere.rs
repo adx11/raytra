@@ -1,7 +1,7 @@
 use crate::rays::Ray;
 use crate::tup::Point;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Sphere();
 
 impl Sphere {
