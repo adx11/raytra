@@ -1,29 +1,32 @@
+use crate::sphere::Sphere;
+
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct Intersection<T> {
+pub struct Intersection {
     pub t: f32,
-    pub object: T,
+    pub object: Sphere,
 }
 
-impl<T> Intersection<T> {
-    pub fn new(t: f32, object: T) -> Intersection<T> {
+impl Intersection {
+    pub fn new(t: f32, object: Sphere) -> Intersection {
         Intersection{t, object}
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct Intersections<T> {
-    pub xs: Vec<Intersection<T>>,
+pub struct Intersections {
+    pub xs: Vec<Intersection>,
 }
 
-impl<T> Intersections<T> {
-    pub fn new(xs: Vec<Intersection<T>>) -> Intersections<T> {
+impl Intersections {
+    pub fn new(xs: Vec<Intersection>) -> Intersections {
         Intersections{xs}
     }
 
-    pub fn hit(&self) -> Option<&Intersection<T>> {
+    pub fn hit(&self) -> Option<Intersection> {
         self.xs.iter()
             .filter(|x| x.t > 0.0)
             .min_by(|x, y| x.t.partial_cmp(&y.t).unwrap())
+            .cloned()
     }
 }
 
@@ -60,13 +63,13 @@ mod tests {
         let i2 = Intersection::new(2.0, s);
         let xs = Intersections::new(vec![i1, i2]);
 
-        assert_eq!(*xs.hit().unwrap(), i1);
+        assert_eq!(xs.hit().unwrap(), i1);
 
         let i1 = Intersection::new(-1.0, s);
         let i2 = Intersection::new(2.0, s);
         let xs = Intersections::new(vec![i1, i2]);
 
-        assert_eq!(*xs.hit().unwrap(), i2);
+        assert_eq!(xs.hit().unwrap(), i2);
 
 
         let i1 = Intersection::new(5.0, s);
@@ -75,7 +78,7 @@ mod tests {
         let i4 = Intersection::new(2.0, s);
         let xs = Intersections::new(vec![i1, i2, i3, i4]);
 
-        assert_eq!(*xs.hit().unwrap(), i4);
+        assert_eq!(xs.hit().unwrap(), i4);
     }
 
     #[test]
@@ -86,7 +89,7 @@ mod tests {
         let i2 = Intersection::new(-2.0, s);
         let xs = Intersections::new(vec![i1, i2]);
 
-        assert_eq!(*xs.hit().unwrap(), i2);
+        assert_eq!(xs.hit().unwrap(), i2);
     }
 
 }

@@ -10,7 +10,7 @@ impl Sphere {
         Sphere()
     }
 
-    pub fn intersect(&self, ray: Ray) -> Intersections<Sphere> {
+    pub fn intersect(&self, ray: Ray) -> Intersections {
         let sphere_to_ray = ray.origin - Point::new(0.0, 0.0, 0.0);
         let a = ray.direction.dot(ray.direction);
         let b = 2.0 * ray.direction.dot(sphere_to_ray);
