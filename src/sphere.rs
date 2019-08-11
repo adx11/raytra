@@ -1,28 +1,48 @@
 use crate::rays::Ray;
 use crate::tup::Point;
+use crate::matrix::Matrix4x4;
 use crate::intersection::*;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct Sphere();
+pub struct Sphere {
+    transform: Matrix4x4,
+}
 
 impl Sphere {
     pub fn new() -> Sphere {
-        Sphere()
+        Sphere {
+            transform: Matrix4x4::IDENTITY,
+        }
+    }
+
+    pub fn with_transform(transform: Matrix4x4) -> Sphere {
+        Sphere {
+            transform
+        }
     }
 
     pub fn intersect(&self, ray: Ray) -> Intersections {
-        let sphere_to_ray = ray.origin - Point::new(0.0, 0.0, 0.0);
-        let a = ray.direction.dot(ray.direction);
-        let b = 2.0 * ray.direction.dot(sphere_to_ray);
-        let c = sphere_to_ray.dot(sphere_to_ray) - 1.0;
+        if let Some(inv) = self.transform.inverse() {
+            let ray_transform = ray.transform(&inv);
 
-        let discriminant = b.powf(2.0) - (4.0 * a * c);
+            let sphere_to_ray_transform = ray_transform.origin - Point::new(0.0, 0.0, 0.0);
+            let a = ray_transform.direction.dot(ray_transform.direction);
+            let b = 2.0 * ray_transform.direction.dot(sphere_to_ray_transform);
+            let c = sphere_to_ray_transform.dot(sphere_to_ray_transform) - 1.0;
 
-        if discriminant < 0.0 {
-            Intersections::new(vec![])
+            let discriminant = b.powf(2.0) - (4.0 * a * c);
+
+            if discriminant < 0.0 {
+                Intersections::new(vec![])
+            } else {
+                let i1 = (-b - discriminant.sqrt()) / (2.0 * a);
+                let i2 = (-b + discriminant.sqrt()) / (2.0 * a);
+
+                Intersections::new(vec![Intersection::new(i1, *self),
+                                        Intersection::new(i2, *self)])
+            }
         } else {
-            Intersections::new(vec![Intersection::new((-b - discriminant.sqrt()) / (2.0 * a), *self),
-                                    Intersection::new((-b + discriminant.sqrt()) / (2.0 * a), *self)])
+            Intersections::new(vec![])
         }
     }
 }
@@ -34,6 +54,7 @@ mod tests {
     use super::*;
     use crate::rays::Ray;
     use crate::tup::{Point, Vector};
+    use crate::transform::*;
 
     #[test]
     fn intersect() {
@@ -103,5 +124,32 @@ mod tests {
         assert_eq!(is.xs.len(), 2);
         assert_eq!(is.xs[0].object, s);
         assert_eq!(is.xs[1].object, s);
+    }
+
+    #[test]
+    fn default_transform() {
+        let s = Sphere::new();
+        assert_eq!(s.transform, Matrix4x4::IDENTITY);
+    }
+
+    #[test]
+    fn change_transform() {
+        let t = translation(2.0, 3.0, 4.0);
+        let s = Sphere::with_transform(t);
+
+        assert_eq!(s.transform, t);
+    }
+
+    #[test]
+    fn intersect_scaled() {
+        let t = scaling(2.0, 2.0, 2.0);
+        let s = Sphere::with_transform(t);
+        let r = Ray::new(Point::new(0.0, 0.0, -5.0),
+                         Vector::new(0.0, 0.0, 1.0));
+        let xs = s.intersect(r);
+
+        assert_eq!(xs.xs.len(), 2);
+        assert_eq!(xs.xs[0].t, 3.0);
+        assert_eq!(xs.xs[1].t, 7.0);
     }
 }
