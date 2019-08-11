@@ -9,15 +9,15 @@ pub struct Sphere {
 }
 
 impl Sphere {
-    pub fn new() -> Sphere {
+    pub fn new(transform: Matrix4x4) -> Sphere {
         Sphere {
-            transform: Matrix4x4::IDENTITY,
+            transform,
         }
     }
 
-    pub fn with_transform(transform: Matrix4x4) -> Sphere {
+    pub fn unit() -> Sphere {
         Sphere {
-            transform
+            transform: Matrix4x4::IDENTITY,
         }
     }
 
@@ -60,7 +60,7 @@ mod tests {
     fn intersect() {
         let r = Ray::new(Point::new(0.0, 0.0, -5.0),
                          Vector::new(0.0, 0.0, 1.0));
-        let s = Sphere::new();
+        let s = Sphere::unit();
         let is = s.intersect(r);
 
         assert_eq!(is.xs.len(), 2);
@@ -72,7 +72,7 @@ mod tests {
     fn intersect_tangent() {
         let r = Ray::new(Point::new(0.0, 1.0, -5.0),
                          Vector::new(0.0, 0.0, 1.0));
-        let s = Sphere::new();
+        let s = Sphere::unit();
         let is = s.intersect(r);
 
         assert_eq!(is.xs.len(), 2);
@@ -84,7 +84,7 @@ mod tests {
     fn intersect_miss() {
         let r = Ray::new(Point::new(0.0, 2.0, -5.0),
                          Vector::new(0.0, 0.0, 1.0));
-        let s = Sphere::new();
+        let s = Sphere::unit();
         let is = s.intersect(r);
 
         assert_eq!(is.xs.len(), 0);
@@ -94,7 +94,7 @@ mod tests {
     fn intersect_interior() {
         let r = Ray::new(Point::new(0.0, 0.0, 0.0),
                          Vector::new(0.0, 0.0, 1.0));
-        let s = Sphere::new();
+        let s = Sphere::unit();
         let is = s.intersect(r);
 
         assert_eq!(is.xs.len(), 2);
@@ -106,7 +106,7 @@ mod tests {
     fn intersect_behind() {
         let r = Ray::new(Point::new(0.0, 0.0, 5.0),
                          Vector::new(0.0, 0.0, 1.0));
-        let s = Sphere::new();
+        let s = Sphere::unit();
         let is = s.intersect(r);
 
         assert_eq!(is.xs.len(), 2);
@@ -118,7 +118,7 @@ mod tests {
     fn intersect_objects() {
         let r = Ray::new(Point::new(0.0, 0.0, -5.0),
                          Vector::new(0.0, 0.0, 1.0));
-        let s = Sphere::new();
+        let s = Sphere::unit();
         let is = s.intersect(r);
 
         assert_eq!(is.xs.len(), 2);
@@ -128,14 +128,14 @@ mod tests {
 
     #[test]
     fn default_transform() {
-        let s = Sphere::new();
+        let s = Sphere::unit();
         assert_eq!(s.transform, Matrix4x4::IDENTITY);
     }
 
     #[test]
     fn change_transform() {
         let t = translation(2.0, 3.0, 4.0);
-        let s = Sphere::with_transform(t);
+        let s = Sphere::new(t);
 
         assert_eq!(s.transform, t);
     }
@@ -143,7 +143,7 @@ mod tests {
     #[test]
     fn intersect_scaled() {
         let t = scaling(2.0, 2.0, 2.0);
-        let s = Sphere::with_transform(t);
+        let s = Sphere::new(t);
         let r = Ray::new(Point::new(0.0, 0.0, -5.0),
                          Vector::new(0.0, 0.0, 1.0));
         let xs = s.intersect(r);

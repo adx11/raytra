@@ -37,7 +37,7 @@ mod tests {
 
     #[test]
     fn intersection() {
-        let s = Sphere::new();
+        let s = Sphere::unit();
         let i = Intersection::new(3.5, s);
 
         assert_eq!(i.t, 3.5);
@@ -46,7 +46,7 @@ mod tests {
 
     #[test]
     fn intersections() {
-        let s = Sphere::new();
+        let s = Sphere::unit();
         let i1 = Intersection::new(1.0, s);
         let i2 = Intersection::new(2.0, s);
         let is = Intersections::new(vec![i1, i2]);
@@ -58,7 +58,7 @@ mod tests {
 
     #[test]
     fn hit() {
-        let s = Sphere::new();
+        let s = Sphere::unit();
         let i1 = Intersection::new(1.0, s);
         let i2 = Intersection::new(2.0, s);
         let xs = Intersections::new(vec![i1, i2]);
@@ -84,7 +84,7 @@ mod tests {
     #[test]
     #[should_panic]
     fn hit_none() {
-        let s = Sphere::new();
+        let s = Sphere::unit();
         let i1 = Intersection::new(-1.0, s);
         let i2 = Intersection::new(-2.0, s);
         let xs = Intersections::new(vec![i1, i2]);
