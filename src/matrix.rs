@@ -32,10 +32,12 @@ impl Matrix4x4 {
         }
     }
 
-    pub const IDENTITY: Matrix4x4 = Matrix4x4{elem: [[1.0, 0.0, 0.0, 0.0],
-                                                     [0.0, 1.0, 0.0, 0.0],
-                                                     [0.0, 0.0, 1.0, 0.0],
-                                                     [0.0, 0.0, 0.0, 1.0]]};
+    pub fn identity() -> Matrix4x4 {
+        Matrix4x4{elem: [[1.0, 0.0, 0.0, 0.0],
+                         [0.0, 1.0, 0.0, 0.0],
+                         [0.0, 0.0, 1.0, 0.0],
+                         [0.0, 0.0, 0.0, 1.0]]}
+    }
 
     fn row(&self, row: usize) -> Tup {
         Tup::new(self.elem[row][0],
@@ -387,7 +389,7 @@ mod tests {
                                2.0, 4.0, 8.0, 16.0,
                                4.0, 8.0, 16.0, 32.0);
 
-        assert_eq!(a * Matrix4x4::IDENTITY,
+        assert_eq!(a * Matrix4x4::identity(),
                    Matrix4x4::new(0.0, 1.0, 2.0, 4.0,
                                   1.0, 2.0, 4.0, 8.0,
                                   2.0, 4.0, 8.0, 16.0,
@@ -405,8 +407,8 @@ mod tests {
                                   9.0, 8.0, 8.0, 0.0,
                                   3.0, 0.0, 5.0, 5.0,
                                   0.0, 8.0, 3.0, 8.0));
-        assert_eq!(Matrix4x4::IDENTITY.transpose(),
-                   Matrix4x4::IDENTITY);
+        assert_eq!(Matrix4x4::identity().transpose(),
+                   Matrix4x4::identity());
     }
 
     #[test]

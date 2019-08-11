@@ -1,7 +1,7 @@
 use crate::matrix::*;
 
 pub fn translation(x: f32, y: f32, z: f32) -> Matrix4x4 {
-    let mut trans = Matrix4x4::IDENTITY;
+    let mut trans = Matrix4x4::identity();
 
     trans.elem[0][3] = x;
     trans.elem[1][3] = y;
@@ -11,7 +11,7 @@ pub fn translation(x: f32, y: f32, z: f32) -> Matrix4x4 {
 }
 
 pub fn scaling(x: f32, y: f32, z: f32) -> Matrix4x4 {
-    let mut trans = Matrix4x4::IDENTITY;
+    let mut trans = Matrix4x4::identity();
 
     trans.elem[0][0] = x;
     trans.elem[1][1] = y;
@@ -21,7 +21,7 @@ pub fn scaling(x: f32, y: f32, z: f32) -> Matrix4x4 {
 }
 
 pub fn rotation_x(rad: f32) -> Matrix4x4 {
-    let mut trans = Matrix4x4::IDENTITY;
+    let mut trans = Matrix4x4::identity();
 
     trans.elem[1][1] = rad.cos();
     trans.elem[1][2] = -rad.sin();
@@ -32,7 +32,7 @@ pub fn rotation_x(rad: f32) -> Matrix4x4 {
 }
 
 pub fn rotation_y(rad: f32) -> Matrix4x4 {
-    let mut trans = Matrix4x4::IDENTITY;
+    let mut trans = Matrix4x4::identity();
 
     trans.elem[0][0] = rad.cos();
     trans.elem[0][2] = rad.sin();
@@ -43,7 +43,7 @@ pub fn rotation_y(rad: f32) -> Matrix4x4 {
 }
 
 pub fn rotation_z(rad: f32) -> Matrix4x4 {
-    let mut trans = Matrix4x4::IDENTITY;
+    let mut trans = Matrix4x4::identity();
 
     trans.elem[0][0] = rad.cos();
     trans.elem[0][1] = -rad.sin();
@@ -56,7 +56,7 @@ pub fn rotation_z(rad: f32) -> Matrix4x4 {
 pub fn shearing(xy: f32, xz: f32,
                 yx: f32, yz: f32,
                 zx: f32, zy: f32) -> Matrix4x4 {
-    let mut trans = Matrix4x4::IDENTITY;
+    let mut trans = Matrix4x4::identity();
 
     trans.elem[0][1] = xy;
     trans.elem[0][2] = xz;
@@ -189,7 +189,7 @@ mod tests {
     #[test]
     fn chain() {
         let p = Point::new(1.0, 0.0, 1.0);
-        let t = Matrix4x4::IDENTITY.rotate_x(PI / 2.0)
+        let t = Matrix4x4::identity().rotate_x(PI / 2.0)
             .scale(5.0, 5.0, 5.0)
             .translate(10.0, 5.0, 7.0);
 

@@ -17,7 +17,7 @@ impl Sphere {
 
     pub fn unit() -> Sphere {
         Sphere {
-            transform: Matrix4x4::IDENTITY,
+            transform: Matrix4x4::identity(),
         }
     }
 
@@ -129,7 +129,7 @@ mod tests {
     #[test]
     fn default_transform() {
         let s = Sphere::unit();
-        assert_eq!(s.transform, Matrix4x4::IDENTITY);
+        assert_eq!(s.transform, Matrix4x4::identity());
     }
 
     #[test]

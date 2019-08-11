@@ -24,8 +24,8 @@ fn main() {
 
     let mut c = Canvas::new(CANVAS_SIZE, CANVAS_SIZE);
 
-    let rot = Matrix4x4::IDENTITY.rotate_z(PI / 6.0);
-    let t = Matrix4x4::IDENTITY.scale(150.0, 150.0, 0.0)
+    let rot = Matrix4x4::identity().rotate_z(PI / 6.0);
+    let t = Matrix4x4::identity().scale(150.0, 150.0, 0.0)
         .translate(200.0, 200.0, 0.0);
 
     let mut p = Point::new(0.0, 1.0, 0.0);
