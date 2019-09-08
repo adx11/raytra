@@ -6,7 +6,7 @@ use raytra::color;
 
 use std::fs;
 
-fn main() {
+fn main() -> std::io::Result<()> {
     const WALL_SIZE: usize = 7;
     const CANVAS_SIZE: usize = 100;
 
@@ -36,5 +36,6 @@ fn main() {
         }
     }
 
-    fs::write("sphere.ppm", canvas.to_ppm());
+    fs::write("sphere.ppm", canvas.to_ppm())?;
+    Ok(())
 }
